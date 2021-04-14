@@ -1,5 +1,6 @@
 <script>
-    import { info, path } from '../stores.js';
+    import { info, formPath } from '../stores.js';
+    import Navbar from "../components/Navbar.svelte";
 
     let key = $info.key;
     let input;
@@ -24,11 +25,11 @@
         let new_data = {...data};
         new_data["option"] = key;
         
-        console.log(new_data);
-        console.log(`http://192.168.93.128/cgi-bin/${$path}/menu.py`);
+        // console.log(new_data);
+        // console.log(`http://192.168.93.128/cgi-bin/${$formPath}/menu.py`);
 
         let resp = await fetch(
-            `http://192.168.93.128/cgi-bin/${$path}/menu.py`,
+            `http://192.168.93.128/cgi-bin/${$formPath}/menu.py`,
             {
                 method: 'POST',
                 body: JSON.stringify(new_data)
@@ -38,10 +39,13 @@
     }
 </script>
 
-<div class="container-flex">
-    <div class="form">
-        <h3 id="option">{key}</h3>
+<Navbar/>
 
+<h3 id="option">{key}</h3>
+
+<div class="container-flex">
+    
+    <div class="form">
         <form on:submit|preventDefault={submitHandler} > <!-- target='op_frame' -->
 
             {#await input}
@@ -66,6 +70,10 @@
 
             <button class="btn" type="submit">
                 Submit
+                <svg width="30" class="arrow" height="23" viewBox="0 0 40 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7.33398 15.5964H32.8443" stroke="#00030E" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M21.6836 6.93726L32.8444 15.5965L21.6836 24.2557" stroke="#00030E" stroke-width="3.9585" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>                    
             </button>
 
         </form>
@@ -104,54 +112,82 @@
 
     #option {
         text-transform: capitalize;
-        color: rgb(168, 236, 188);
+        color: #FF9676;
+        font-family: "Source Sans Pro";
+        font-weight: bold;
+        font-size: 40px;
+        padding-left: 9%;
+        /* display: flex;
+        flex-direction: row;
+        justify-content: first baseline; */
     }
 
-
     .form {
-        color: rgb(43, 2, 2);
+        color: #9CF1E2;
         display: flex; 
+        text-transform: capitalize;
         flex-direction: column;
         align-items: center;
+        font-family: 'PT Sans';
+        font-size: 20px;
     }
 
     .output {
         overflow: auto; 
         height: 500px;
         width: 600px;
-        background-color: #060F5B;
+        background-color: #0B1124;
         color: chartreuse;
+        font-family: 'PT Mono', monospace;
     }
 
     .input-text {
-        background-color: #313ca1;
-        border-color: darkblue;
-        border-radius: 50px;
+        background-color: #0D101A;
+        box-shadow: 5px 7px #000208;
+        border: none;
+        border-radius: 3%;
+        resize: vertical;
+        padding-left: 20px;
+        color: #E8E9EA;
         width: 250px;
-        transition: ease-in-out, width .35s ease-in-out;
+        height: 50px;
+        font-size: small;
+        font-family: 'Poppins';
+        /* transition: ease-in-out, width .35s ease-in-out; */
     }
 
-    .input-text:focus {
+    /* .input-text:focus {
         outline: none;
         width: 270px;
-    }
+    } */
 
     .btn {
-        background-color: #E24054;
-        border: none;
-        color: white;
-        padding: 15px 34px;
-        text-align: center;
-        font-size: 20px;
-        margin: 4px 2px;
+        background: radial-gradient(196.46% 196.46% at 50.15% -24.78%, #FF8B68 0%, #FF4B14 100%);
+        width: 230px;
+        height: 67px;
+
+        box-shadow: 0px 3.25664px 3.25664px rgba(0, 0, 0, 0.25);
+        border-radius: 6.51327px;
+
+        font-family: 'Poppins';
+        font-weight: bold;
+        font-size: larger;
+        
+        margin-top: 45px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
         cursor: pointer;
-        display: inline-block;
         text-decoration: none;
-        border-radius: 20px;
+
+        border: none;
         outline: none;
-        border-color: black;
-        border-width: 10px;
-        box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    }
+
+    .arrow {
+        padding-left: 5px;
     }
 
     .btn:hover {

@@ -1,8 +1,8 @@
-<!-- <script>
+<script>
     import { info, path } from '../stores.js';
     import Button from '../components/Button.svelte';
-    import Navbar from "../components/Navbar.svelte";
     
+    console.log("Hello");
     export let params = {};
     console.log(params);
     
@@ -52,8 +52,6 @@
     }
 </script>
 
-<Navbar/>
-
 <p>List</p>
 
 
@@ -94,4 +92,4 @@
     /* background-color: #2196F3; */
     padding: 20px;
     }
-</style> -->
+</style>

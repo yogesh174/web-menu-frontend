@@ -1,6 +1,7 @@
 <script>
     import { info, formPath } from '../stores.js';
     import Navbar from "../components/Navbar.svelte";
+    import Spinner from "../components/Spinner.svelte";
 
     let key = $info.key;
     let input;
@@ -8,7 +9,6 @@
 
     function loadInputs() {
         let input = $info.inputs;
-        console.log(input);
         for (let i=0; i< input.length; i++) {    
             data[input[i].variable] = input[i].default;
         }
@@ -17,17 +17,17 @@
 
     input = loadInputs();
 
-    // console.log(data);
-
     let output;
 
     async function submitHandler() {
+        output = "loading";
         let new_data = {...data};
+        
+        // Clear all inputs on submit
+        loadInputs();
+
         new_data["option"] = key;
         
-        // console.log(new_data);
-        // console.log(`http://192.168.93.128/cgi-bin/${$formPath}/menu.py`);
-
         let resp = await fetch(
             `http://192.168.93.128/cgi-bin/${$formPath}/menu.py`,
             {
@@ -56,7 +56,7 @@
                     {#if value.name}
                         <p>{value.name}</p>
                         {#if value.type===""}
-                            <input class="input-text" type="" bind:value="{data[value.variable]}">
+                            <input class="input-text" type="text" spellcheck="false" bind:value="{data[value.variable]}">
                         <!-- {:else if} -->
                         {/if}
                     {/if}
@@ -82,10 +82,18 @@
 
 
     <div class="output">
-        {#if output}
-        <pre>
-            {output}
-        </pre>
+        {#if !output}
+            <div class="no-output">
+                No output
+            </div>
+        
+        {:else if output === "loading"}
+            <Spinner/>
+
+        {:else}
+            <pre>
+                {output}
+            </pre>
         {/if}
     </div>
 
@@ -93,15 +101,6 @@
 
 
 <style>
-    /* .container-grid {
-        margin: auto;
-        display: grid; 
-        justify-content: space-around;
-        grid-gap: 10px 01px;
-        grid-template-columns: 200px 200px;
-        padding: 20px;
-    } */
-
 
     .container-flex {
         display: flex;
@@ -117,9 +116,6 @@
         font-weight: bold;
         font-size: 40px;
         padding-left: 9%;
-        /* display: flex;
-        flex-direction: row;
-        justify-content: first baseline; */
     }
 
     .form {
@@ -134,18 +130,21 @@
 
     .output {
         overflow: auto; 
-        height: 500px;
+        /* height: 100%; */
         width: 600px;
         background-color: #0B1124;
         color: chartreuse;
         font-family: 'PT Mono', monospace;
+        padding: 3%;
+        border-radius: 5px;
+        margin-bottom: 45px;
     }
 
     .input-text {
         background-color: #0D101A;
         box-shadow: 5px 7px #000208;
         border: none;
-        border-radius: 3%;
+        border-radius: 5px;
         resize: vertical;
         padding-left: 20px;
         color: #E8E9EA;
@@ -153,13 +152,20 @@
         height: 50px;
         font-size: small;
         font-family: 'Poppins';
-        /* transition: ease-in-out, width .35s ease-in-out; */
+        transition: ease-in-out, width .35s ease-in-out;
     }
 
     /* .input-text:focus {
         outline: none;
         width: 270px;
     } */
+
+    .no-output {
+        text-align: center;
+        color: #9dace2;
+        font-size: 25px;
+        font-family: 'Poppins';
+    }
 
     .btn {
         background: radial-gradient(196.46% 196.46% at 50.15% -24.78%, #FF8B68 0%, #FF4B14 100%);
@@ -174,6 +180,7 @@
         font-size: larger;
         
         margin-top: 45px;
+        margin-bottom: 45px;
 
         display: flex;
         justify-content: center;

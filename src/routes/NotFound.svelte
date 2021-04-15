@@ -1,11 +1,23 @@
-<h1>Not Found</h1>
-<p>This route doesn't exist.</p>
+<script>
+	import Navbar from "../components/Navbar.svelte";
+</script>
+
+<Navbar/>
+<div id="not-found">
+	Page Not Found
+</div>
 
 <style>
-	h1 {
-		color: #ff0040;
+	#not-found {
+		color: #ff235a;
 		text-transform: uppercase;
-		font-size: 4em;
+		font-size: 3em;
 		font-weight: 100;
+		position: absolute;
+		width: 100%;
+		height: calc(100% - 3.25em);
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 </style>

@@ -43,6 +43,7 @@
     }
 
     .nav-items a {
+        font-size: 20px;
         color: #FF8C68;
     }
 

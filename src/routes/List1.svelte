@@ -1,9 +1,10 @@
 <script>
     import { info, formPath } from '../stores.js';
-    import Button from '../components/Button.svelte';
     import Navbar from "../components/Navbar.svelte";
     import Card from "../components/Card.svelte";
-    
+    import Spinner from "../components/Spinner.svelte";
+    import Error from "../components/Error.svelte";
+
     export let params = {};
     
     let path = params.wild;
@@ -11,18 +12,13 @@
     if (!path) {
         path = "";
     }
-    
-    console.log(path);
-    console.log("etest");
 
     async function getList(path) {
-        // console.log(path);
         const data = {
             "directory": path
         }
-        console.log(data);
         let resp = await fetch(
-            'http://192.168.93.128/cgi-bin/list.py', 
+            'http://192.168.93.128/cgi-bin/list.py',
             {
                 method: 'POST',
                 body: JSON.stringify(data)
@@ -44,7 +40,6 @@
     }
 
     function setInfo(itemList) {
-        console.log(path);
         info.set(itemList);
     }
 
@@ -53,7 +48,6 @@
     let currentFilter="All";
 
     function updateFilter(list, filter) {
-        console.log(filter);
         currentFilter = filter;
         if (filter === 'All')
             filters = list;
@@ -61,87 +55,111 @@
             filters = list.filter((data) => data.group === filter);
     }
 
-    // data.then(val => {
-    //     // console.log(val);
-    //     filters = val.groups;
-    // });
-
 </script>
 
 <Navbar/>
 
-<!-- {#if path === ""}
-    <div class="main">
-        <Navbar/>
-        <Hero/>
-    </div>
-
-    <Card/>
-{/if} -->
-
-
 {#await data}
-    <p>Fetching Data...</p>
+    <Spinner/>
 
 {:then data}
 
     {#if data.hasDirectories}
-        <!-- <div class="options-grid"> -->
-            {#each data.list as item, color (item)}
-                <!-- <a href={"#/list2/" + path + "/" + item.directory}>
-                    {item.key}
-                </a> -->
-                <Card
-                    name={item.key}
-                    description={item.description} 
-                    href={"#/list2/" + path + "/" + item.directory} 
-                    color={color+1}
-                />
-            {/each}
-        <!-- </div> -->
+        {#each data.list as item, color (item)}
+            <Card
+                name={item.key}
+                description={item.description} 
+                href={"#/list2/" + path + "/" + item.directory} 
+                color={color+1}
+            />
+        {/each}
     {:else}
-        <!-- <div class="options-grid"> -->
-            {#each data.groups as group (group)}
-                <!-- <button on:click={() => handleSubmit(item, path)}>
-                    <Button href="#/form/" name={item.key}/>
-                </button> -->
-                <!-- class="filter {group}" -->
-                <button class="btn" class:active={currentFilter === group} on:click={() => updateFilter(data.list, group)}>
-                    {group}
-                </button>
-            {/each}
-            <!-- {filters}
-            {currentFilter} -->
-            <!-- {filters} -->
-
-            {#each filters as item (item)}
-                <button on:click={() => handleSubmit(item, path)}>
-                    <Button href="#/form/" name={item.key}/>
-                </button>
-            {/each}
+        <div class="container">
+            <div class="filter-container">
+                {#each data.groups as group (group)}
+                    <button class="btn-1" class:active={currentFilter === group} on:click={() => updateFilter(data.list, group)}>
+                        {group}
+                    </button>
+                {/each}
+            </div>
             
-
-            <!-- {#each data.list as item (item)}
-                <button on:click={() => handleSubmit(item, path)}>
-                    <Button href="#/form/" name={item.key}/>
-                </button>
-            {/each} -->
-        <!-- </div> -->
+            <div class="data-container">
+                {#each filters as item (item)}
+                    <div on:click={() => handleSubmit(item, path)}>
+                        <a href="#/form/" class="btn-2"> 
+                            {item.key}
+                            <svg width="28" height="30" class="arrow" viewBox="0 0 58 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.66699 22.5H48.3337" stroke="#E5E5E6" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M31.417 9.375L48.3337 22.5L31.417 35.625" stroke="#E5E5E6" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                    </div>
+                {/each}
+            </div>
+        </div>
     {/if}
 
 {:catch error}
-	<p style="color: yellow">{error.message}</p>
+	<Error/>
 {/await}
 
-<!-- <style>
+<style>
 
-    .options-grid {
-    margin: auto;
-    display: grid;
-    justify-content: space-around;
-    grid-gap: 75px 75px;
-    grid-template-columns: 175px 175px 175px 175px 175px  ;
-    /* background-color: #2196F3; */
-    padding: 20px;
+    .container {
+        margin-left: 5%;
+        margin-right: 5%;
+        margin-top: 5%;
     }
-</style> -->
+
+    .btn-1 {
+        font-family: 'Source Sans Pro';
+        font-weight: bold;
+        font-size: 20px;
+        color: #A67F75;
+        background-color: #00030E;
+        border: none;
+        outline: none;
+        padding: 2% 2.5%;
+        cursor: pointer;
+    }
+
+    .btn-2 {
+        background-color: #23262F;
+        border: none;
+        color: #EAEBEC;
+        padding: 20px 34px;
+        text-align: center;
+        font-family: 'PT Sans';
+        font-size: 23px;
+        margin: 10px; 
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-decoration: none;
+        border-radius: 5px;
+        outline: none;
+        box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
+        max-width: 60%;
+    }
+
+    .arrow {
+        padding-left: 3%;
+    }
+    
+    .active {
+        font-size: 26px;
+        color: #FF9676;
+        background-color: #0D101A;
+        cursor: pointer;
+    }
+
+    .data-container {
+        background-color: #0D101A;
+        padding: 3% 0% 3% 3%;
+        margin-right: 3%;
+        display: grid;
+        grid-gap: 0% 0%;
+        grid-template-columns: 50% 50%;
+    }
+</style>

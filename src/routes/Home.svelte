@@ -1,9 +1,10 @@
 <script>
     import { info, formPath } from '../stores.js';
-    import Button from '../components/Button.svelte';
     import Navbar from "../components/Navbar.svelte";
     import Hero from "../components/Hero.svelte";
     import Card from "../components/Card.svelte";
+    import Spinner from "../components/Spinner.svelte";
+    import Error from "../components/Error.svelte";
     
     let path = "";
 
@@ -11,7 +12,6 @@
         const data = {
             "directory": path
         }
-        // console.log(data);
         let resp = await fetch(
             'http://192.168.93.128/cgi-bin/list.py', 
             {
@@ -32,7 +32,6 @@
     }
 
     function setInfo(itemList) {
-        console.log(path);
         info.set(itemList);
     }
 </script>
@@ -43,7 +42,7 @@
 </div>
 
 {#await data}
-    <p>Fetching Data...</p>
+    <Spinner/>
 
 {:then data}
 
@@ -56,16 +55,10 @@
                     color={color}
                 />
             {/each}
-    {:else}
-            {#each data.list as item (item)}
-                <button on:click={() => handleSubmit(item, path)}>
-                    <Button href="#/form/" name={item.key}/>
-                </button>
-            {/each}
     {/if}
 
 {:catch error}
-	<p style="color: yellow">{error.message}</p>
+    <Error/>
 {/await}
 
 <style>

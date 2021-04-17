@@ -1,12 +1,11 @@
 <div class="hero">
     <div class="title">
-        A Web UI menu to manage all your technologies at one place
+        Integrate and manage all your technologies with great ease
     </div>
     <div class="image">
         <img src="tech.png" alt="Techs" width=75%>
     </div>
 </div>
-
 
 <style>
 

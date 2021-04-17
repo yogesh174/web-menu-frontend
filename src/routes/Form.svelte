@@ -20,6 +20,7 @@
     let output;
 
     async function submitHandler() {
+        window.scrollTo(0,0);
         output = "loading";
         let new_data = {...data};
         
